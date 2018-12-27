@@ -1,4 +1,4 @@
-package com.test.reflect.typevariable;
+package com.test.reflect.type.typevariable;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;

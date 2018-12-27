@@ -1,4 +1,4 @@
-package com.test.reflect.arraytype;
+package com.test.reflect.type.arraytype;
 
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;

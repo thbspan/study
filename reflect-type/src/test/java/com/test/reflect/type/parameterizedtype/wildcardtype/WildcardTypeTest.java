@@ -1,4 +1,4 @@
-package com.test.reflect.wildcardtype;
+package com.test.reflect.type.parameterizedtype.wildcardtype;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
