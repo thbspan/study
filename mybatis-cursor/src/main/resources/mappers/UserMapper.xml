@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.mybatis.cursor.mapper.UserMapper">
+
+    <!--<select id="selectAllByCursor" resultType="com.test.mybatis.cursor.entity.User" fetchSize="-2147483648" resultSetType="FORWARD_ONLY">-->
+    <select id="selectAllByCursor" resultType="com.test.mybatis.cursor.entity.User">
+        SELECT
+            id,
+            `name`,
+            city,
+            state
+        FROM `user`
+    </select>
+
+    <select id="selectAll" resultType="com.test.mybatis.cursor.entity.User">
+        SELECT
+            id,
+            `name`,
+            city,
+            state
+        FROM `user`
+    </select>
+
+    <insert id="insertUser" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+      INSERT INTO `user` ( `name`, city, state )
+      VALUES ( #{name}, #{city}, #{state} )
+    </insert>
+</mapper>
