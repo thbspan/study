@@ -10,6 +10,7 @@
         <module>reactor</module>
         <module>reflect-type</module>
         <module>java8time</module>
+        <module>pattern</module>
     </modules>
     <packaging>pom</packaging>
 

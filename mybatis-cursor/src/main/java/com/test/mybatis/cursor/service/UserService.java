@@ -16,9 +16,12 @@ public class UserService {
 
     @Transactional(rollbackFor = Exception.class)
     public void testCursor() {
+        int count = 0;
         for (User user : userMapper.selectAllByCursor()) {
             System.out.println(user);
+            count++;
         }
+        System.out.println("++++count" + count);
     }
 
     public void testInit() {

@@ -20,7 +20,7 @@ public class MybatisCursorApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
 //        userService.testInit();
-        userService.testCursor();
+//        userService.testCursor();
     }
 
 }
