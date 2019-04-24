@@ -6,12 +6,16 @@
     <artifactId>study</artifactId>
 
     <version>0.0.1-SNAPSHOT</version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <modules>
         <module>reactor</module>
         <module>reflect-type</module>
         <module>java8time</module>
         <module>pattern</module>
         <module>threadpool</module>
+        <module>asm-test</module>
     </modules>
     <packaging>pom</packaging>
 
