@@ -16,6 +16,7 @@
         <module>pattern</module>
         <module>threadpool</module>
         <module>asm-test</module>
+        <module>spi</module>
     </modules>
     <packaging>pom</packaging>
 
