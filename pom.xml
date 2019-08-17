@@ -17,6 +17,7 @@
         <module>threadpool</module>
         <module>asm-test</module>
         <module>spi</module>
+        <module>reg-exp</module>
     </modules>
     <packaging>pom</packaging>
 

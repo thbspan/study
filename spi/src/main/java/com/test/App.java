@@ -1,6 +1,5 @@
 package com.test;
 
-import java.util.Iterator;
 import java.util.ServiceLoader;
 
 import com.test.spi.People;
