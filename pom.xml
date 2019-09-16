@@ -18,6 +18,7 @@
         <module>asm-test</module>
         <module>spi</module>
         <module>reg-exp</module>
+        <module>httpcomponents</module>
     </modules>
     <packaging>pom</packaging>
 
