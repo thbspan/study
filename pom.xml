@@ -20,6 +20,7 @@
         <module>spi</module>
         <module>reg-exp</module>
         <module>httpcomponents</module>
+        <module>parsing</module>
     </modules>
     <packaging>pom</packaging>
 
