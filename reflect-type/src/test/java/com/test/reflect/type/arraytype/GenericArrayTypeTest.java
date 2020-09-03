@@ -4,8 +4,8 @@ import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class GenericArrayTypeTest {
 
@@ -23,13 +23,13 @@ public class GenericArrayTypeTest {
     @Test
     public void testMethod() throws NoSuchMethodException, NoSuchFieldException {
         Type type = getMethodGenericReturnType("getArray");
-        Assert.assertTrue(GenericArrayType.class.isAssignableFrom(type.getClass()) );// true
+        Assertions.assertTrue(GenericArrayType.class.isAssignableFrom(type.getClass()) );// true
 
         type = getFieldType("strings");
 
-        Assert.assertTrue(GenericArrayType.class.isAssignableFrom(type.getClass()) );// false
+        Assertions.assertTrue(GenericArrayType.class.isAssignableFrom(type.getClass()) );// false
         type = getMethodGenericReturnType("getArray2");
-        Assert.assertTrue(GenericArrayType.class.isAssignableFrom(type.getClass()) );// false
+        Assertions.assertTrue(GenericArrayType.class.isAssignableFrom(type.getClass()) );// false
     }
     private Type getMethodGenericReturnType(String name) throws NoSuchMethodException {
         Method method = GenericArrayTypeTest.class.getDeclaredMethod(name);

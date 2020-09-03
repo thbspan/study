@@ -1,6 +1,6 @@
 package com.test.pattern.adapter.classadapter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ClassAdapterTest {
 

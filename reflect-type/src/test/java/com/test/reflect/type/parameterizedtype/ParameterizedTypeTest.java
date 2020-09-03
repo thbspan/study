@@ -5,8 +5,9 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 
 public class ParameterizedTypeTest {
 
@@ -33,6 +34,6 @@ public class ParameterizedTypeTest {
         Field field = ParameterizedTypeTest.class.getDeclaredField(name);
         Type type = field.getGenericType();
         System.out.println(type.getClass());
-        Assert.assertTrue(type instanceof ParameterizedType);
+        Assertions.assertTrue(type instanceof ParameterizedType);
     }
 }

@@ -5,8 +5,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class WildcardTypeTest {
 
@@ -18,10 +18,10 @@ public class WildcardTypeTest {
         Method method = this.getClass().getMethod("wildType", Class.class);
         Type[] types = method.getGenericParameterTypes();
         for (Type parameterizedType : types) {
-            Assert.assertTrue(parameterizedType instanceof ParameterizedType); // true
+            Assertions.assertTrue(parameterizedType instanceof ParameterizedType); // true
             Type[] actualTypeArgument = ((ParameterizedType)parameterizedType).getActualTypeArguments();
             for (Type type : actualTypeArgument) {
-                Assert.assertTrue(type instanceof WildcardType);
+                Assertions.assertTrue(type instanceof WildcardType);
                 WildcardType wildcardType = (WildcardType) type;
                 Type[] lowerBounds = wildcardType.getLowerBounds();
                 if (null != lowerBounds) {

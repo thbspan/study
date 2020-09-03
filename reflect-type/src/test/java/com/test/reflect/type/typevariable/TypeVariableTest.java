@@ -6,8 +6,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * 变量类型，泛型中的变量
@@ -27,8 +27,8 @@ public class TypeVariableTest<T extends Number & Serializable, V> {
     public void testMethod() throws NoSuchMethodException {
         Method method = TypeVariableTest.class.getDeclaredMethod("getMapper");
         Type returnType = method.getGenericReturnType();
-        Assert.assertTrue(TypeVariable.class.isAssignableFrom(returnType.getClass()) );// true
-        TypeVariable typeVariable = (TypeVariable) returnType;
+        Assertions.assertTrue(TypeVariable.class.isAssignableFrom(returnType.getClass()) );// true
+        TypeVariable<?> typeVariable = (TypeVariable<?>) returnType;
         // 获取 T extends Number & Serializable 中 extends后面的内容；没有默认Object
         for (Type bound : typeVariable.getBounds()) {
             System.out.println(bound);

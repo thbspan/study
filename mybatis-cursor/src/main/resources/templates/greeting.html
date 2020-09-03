@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>welcome page</title>
 </head>
 <body>
-<p th:text="'Hello, ' + ${name} + '!'"/>
+<p th:text="'Hello, ' + ${name} + '!'"></p>
 <form method="post" action="/greeting">
     <input type="hidden" name="name" value="peter" />
     <input type="submit" value="确定">

@@ -4,8 +4,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ClazzTest {
     private int a;
@@ -49,6 +49,6 @@ public class ClazzTest {
         Field field = ClazzTest.class.getDeclaredField(name);
         Type type = field.getGenericType();
         System.out.println(type.getClass());
-        Assert.assertTrue(type instanceof Class);
+        Assertions.assertTrue(type instanceof Class);
     }
 }

@@ -1,6 +1,6 @@
 package com.test.pattern.adapter.objectadapter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.test.pattern.adapter.classadapter.Source;
 import com.test.pattern.adapter.classadapter.Target;
