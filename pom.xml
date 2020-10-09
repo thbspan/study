@@ -24,6 +24,7 @@
         <module>httpcomponents</module>
         <module>parsing</module>
         <module>mybatis-cursor</module>
+        <module>zookeeper</module>
     </modules>
 
     <dependencies>
