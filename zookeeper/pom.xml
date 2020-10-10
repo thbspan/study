@@ -13,6 +13,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>zookeeper-original</module>
+        <module>zookeeper-zkclient</module>
+        <module>zookeeper-curator</module>
     </modules>
 
 </project>
