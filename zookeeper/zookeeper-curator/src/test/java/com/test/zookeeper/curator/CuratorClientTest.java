@@ -16,6 +16,7 @@ import org.apache.curator.framework.recipes.barriers.DistributedBarrier;
 import org.apache.curator.framework.recipes.barriers.DistributedDoubleBarrier;
 import org.apache.curator.framework.recipes.cache.NodeCache;
 import org.apache.curator.framework.recipes.cache.PathChildrenCache;
+import org.apache.curator.framework.recipes.cache.TreeCache;
 import org.apache.curator.framework.recipes.leader.LeaderSelector;
 import org.apache.curator.framework.recipes.leader.LeaderSelectorListenerAdapter;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
@@ -128,35 +129,53 @@ public class CuratorClientTest {
 
     /**
      * cursor事件处理，curator能够自动为开发人员处理反复注册监听
+     * <br/>
+     * <b>NodeCache：监听节点对应增、删、改操作</b>
      */
     @Test
-    public void nodeCacheTest() throws Exception {
+    public void nodeCache() throws Exception {
         //******************** 监听一个存在的节点
         // client : Curator 客户端实例 。 path: 监听节点的节点路径 。 dataIsCompressed：是否进行数据压缩
         NodeCache nodeCache = new NodeCache(curatorFramework, "/trade", false);
         // buildInitial：如果设置为true 则NodeCache在第一次启动的时候就会立刻从ZK上读取对应节点的数据内容 保存到Cache中。
+        // 调用start方法开始监听
         nodeCache.start(false);
-        nodeCache.getListenable().addListener(() -> {
-            System.out.println("Node data update , new data:" + new String(nodeCache.getCurrentData().getData()));
-        });
+        nodeCache.getListenable().addListener(
+                () -> System.out.println("Node data update , new data:" + new String(nodeCache.getCurrentData().getData())));
         //******************** 监听一个不存在的节点 当节点被创建后，也会触发监听器 **********************//
         // client : Curator 客户端实例 。 path: 监听节点的节点路径 。 dataIsCompressed：是否进行数据压缩
         NodeCache nodeCache2 = new NodeCache(curatorFramework, "/trade1", false);
         // buildInitial：如果设置为true 则NodeCache在第一次启动的时候就会立刻从ZK上读取对应节点的数据内容 保存到Cache中。
         nodeCache2.start(false);
-        nodeCache2.getListenable().addListener(() -> {
-            System.out.println("Node data update , new data:" + new String(nodeCache.getCurrentData().getData()));
-        });
+        nodeCache2.getListenable().addListener(
+                () -> System.out.println("Node data update , new data:" + new String(nodeCache.getCurrentData().getData())));
         Thread.sleep(Integer.MAX_VALUE);
     }
 
     /**
      * 测试监听子节点变化
+     * <br/>
+     * <b>NodeCache：监听节点下一级子节点的增、删、改操作</b>
+     * <br/>
+     * <b>注意事项：</b>
+     * <ul>
+     *     <li>无法对监听路径所在节点进行监听(即不能监听path对应节点的变化)</li>
+     *     <li>只能监听path对应节点下一级目录的子节点的变化内容(即只能监听/path/node1的变化，而不能监听/path/node1/node2 的变化)</li>
+     *     <li>
+     *         <p>PathChildrenCache在调用start()方法时，有3种启动模式，分别为：</p>
+     *         <ul>
+     *             <li>NORMAL-初始化缓存数据为空</li>
+     *             <li>BUILD_INITIAL_CACHE-在start方法返回前，初始化获取每个子节点数据并缓存</li>
+     *             <li>POST_INITIALIZED_EVENT-在后台异步初始化数据完成后，会发送一个INITIALIZED初始化完成事件</li>
+     *         </ul>
+     *     </li>
+     * </ul>
      */
     @Test
     public void pathChildrenCache() throws Exception {
         PathChildrenCache nodeCache = new PathChildrenCache(curatorFramework, "/trade", true);
         // buildInitial：如果设置为true 则NodeCache在第一次启动的时候就会立刻从ZK上读取对应节点的数据内容 保存到Cache中。
+        // 调用start方法开始监听
         nodeCache.start();
         nodeCache.getListenable().addListener((client, event) -> {
             switch (event.getType()) {
@@ -178,6 +197,43 @@ public class CuratorClientTest {
         curatorFramework.setData().forPath("/trade/PathChildrenCache", "update".getBytes());
         Thread.sleep(100L);
         curatorFramework.delete().withVersion(-1).forPath("/trade/PathChildrenCache");
+    }
+
+    /**
+     * 基本同{@link #pathChildrenCache()}、{@link #nodeCache()}，
+     * <br/>
+     * <b>可以将指定的路径节点作为根节点，对其所有的子节点操作进行监听(包括后代节点)，呈现树形目录的监听</b>
+     */
+    @Test
+    public void treeCache() throws Exception {
+        String path = "/trade";
+        TreeCache treeCache = new TreeCache(curatorFramework, path);
+        // 调用start方法开始监听
+        treeCache.start();
+        //添加TreeCacheListener监听器
+        treeCache.getListenable().addListener(
+                (client, event) -> System.out.println("监听到节点数据变化，类型：" + event.getType() + ",内容：" + event.getData()));
+        Thread.sleep(1000);
+        //更新父节点数据
+        curatorFramework.setData().forPath(path, "333".getBytes());
+        Thread.sleep(1000);
+        String childNodePath = path + "/child";
+        //创建子节点
+        curatorFramework.create().forPath(childNodePath, "111".getBytes());
+        Thread.sleep(1000);
+        //更新子节点
+        curatorFramework.setData().forPath(childNodePath, "222".getBytes());
+        Thread.sleep(1000);
+        //删除子节点
+        curatorFramework.delete().forPath(childNodePath);
+
+        String subChildNodePath = childNodePath + "/child/a/b";
+        curatorFramework.create().creatingParentsIfNeeded().forPath(subChildNodePath, "111".getBytes());
+        Thread.sleep(1000);
+        curatorFramework.setData().forPath(subChildNodePath, "222".getBytes());
+        Thread.sleep(1000);
+        curatorFramework.delete().forPath(subChildNodePath);
+        Thread.sleep(Integer.MAX_VALUE);
     }
 
     /**
