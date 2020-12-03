@@ -26,6 +26,7 @@
         <module>mybatis-cursor</module>
         <module>zookeeper</module>
         <module>redis</module>
+        <module>jjwt</module>
     </modules>
 
     <dependencies>
