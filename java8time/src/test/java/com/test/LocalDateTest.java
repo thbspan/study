@@ -11,5 +11,7 @@ public class LocalDateTest {
     public void test() {
         LocalDate localDate = LocalDate.now();
         System.out.println(localDate.with(TemporalAdjusters.lastDayOfYear()));
+        System.out.println(localDate.with(TemporalAdjusters.firstDayOfMonth()));
+        System.out.println(localDate.with(TemporalAdjusters.lastDayOfMonth()));
     }
 }
