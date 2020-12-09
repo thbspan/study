@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration type="off" monitorInterval="30">
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%p] - %l %x - %m%n"/>
+        </Console>
+        <!-- 这个会打印出所有的info及以下级别的信息，每次大小超过size，则这size大小的日志会自动转储为日期+序号后缀的log文件 -->
+        <RollingFile name="Logic" fileName="${web:rootDir:-.}/logs/errors.log" filePattern="${web:rootDir:-.}/logs/error.%d{yyyy-MM-dd}-%i.log">
+            <!--只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch） -->
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%p] - %l %x - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100MB"/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${web:rootDir:-.}/logs" maxDepth="1">
+                    <IfFileName glob="errors.*.log" />
+                    <IfLastModified age="14d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+        <Async name="Async">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="Logic"/>
+        </Async>
+    </Appenders>
+
+    <loggers>
+        <logger name="org" level="info"/>
+
+        <Root level="info" includeLocation="true">
+            <appender-ref ref="Async"/>
+        </Root>
+    </loggers>
+
+</configuration>

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>watch</title>
+    <script type="text/javascript">
+        let clicked = false;
+        let socket;
+        function startWatch() {
+            if (!clicked) {
+                document.getElementById("button").innerText = "停止watch";
+                clicked = true;
+                let count = 1;
+                socket = new WebSocket("ws://localhost:7000/ws/watch/consumer");
+                socket.onmessage = function (event) {
+                    const jsonStr = event.data;
+                    console.log(jsonStr);
+                    const json = JSON.parse(jsonStr);
+                    const ul = document.getElementById("content");
+                    ul.innerHTML = "";
+
+                    let li = document.createElement("li");
+                    li.innerHTML = new Date().toLocaleString() + ":第" + count++ + "次调用";
+                    ul.appendChild(li);
+
+                    const keys = Object.keys(json);
+                    for (let i = 0; i < keys.length; i++) {
+                        li = document.createElement("li");
+                        li.innerHTML = keys[i] + ":" + json[keys[i]];
+                        ul.appendChild(li);
+                    }
+                };
+            } else {
+                if (socket) {
+                    socket.close();
+                }
+                document.getElementById("button").innerText = "开始watch";
+                clicked = false;
+            }
+        }
+    </script>
+</head>
+<body>
+<button id="button" onclick="startWatch()">开始watch</button>
+<ul id="content"></ul>
+</body>
+</html>
