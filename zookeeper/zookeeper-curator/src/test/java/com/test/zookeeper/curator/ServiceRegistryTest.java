@@ -77,6 +77,8 @@ public class ServiceRegistryTest {
             while (!"exit".equals(line)) {
                 line = scanner.nextLine();
             }
+        } finally {
+            serviceRegistry.close();
         }
     }
 
