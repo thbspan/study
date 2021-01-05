@@ -6,6 +6,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryOneTime;
 import org.apache.curator.x.discovery.ServiceInstance;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,13 +18,19 @@ public class ServiceDiscoverTest {
     private CuratorFramework curatorFramework;
 
     @BeforeEach
-    public void before() {
+    public void before() throws InterruptedException {
         curatorFramework = CuratorFrameworkFactory.builder()
                 .connectString("localhost:2181")
                 .retryPolicy(new RetryOneTime(1000))
                 .namespace("demo") // 命名空间，该curatorFramework创建的节点的父节点
                 .build();
         curatorFramework.start();
+        curatorFramework.blockUntilConnected();
+    }
+
+    @AfterEach
+    public void after() {
+        curatorFramework.close();
     }
 
     @Test

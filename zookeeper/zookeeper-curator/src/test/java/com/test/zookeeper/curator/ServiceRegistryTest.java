@@ -10,6 +10,7 @@ import org.apache.curator.retry.RetryOneTime;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.UriSpec;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,18 +23,24 @@ public class ServiceRegistryTest {
      * 测试的服务名称
      */
     public static final String SERVICE_NAME = "com.test.zookeeper.ExampleService";
-    public static final String DEFAULT_URI_SPEC = "{scheme}://{address}:{port}";
+    public static final String DEFAULT_URI_SPEC = "{scheme}://{address}:{port}/{name}";
 
     private CuratorFramework curatorFramework;
 
     @BeforeEach
-    public void before() {
+    public void before() throws InterruptedException {
         curatorFramework = CuratorFrameworkFactory.builder()
                 .connectString("localhost:2181")
                 .retryPolicy(new RetryOneTime(1000))
                 .namespace("demo") // 命名空间，该curatorFramework创建的节点的父节点
                 .build();
         curatorFramework.start();
+        curatorFramework.blockUntilConnected();
+    }
+
+    @AfterEach
+    public void after() {
+        curatorFramework.close();
     }
 
     @Test
@@ -48,6 +55,7 @@ public class ServiceRegistryTest {
                     .payload(new ServerPayload("test", 8))
                     .uriSpec(new UriSpec(DEFAULT_URI_SPEC))
                     .build();
+            System.out.println(instance.buildUriSpec());
             serviceRegistry.registerService(instance);
         }
 
