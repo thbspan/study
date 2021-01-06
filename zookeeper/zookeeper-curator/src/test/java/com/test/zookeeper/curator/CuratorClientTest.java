@@ -44,6 +44,7 @@ public class CuratorClientTest {
                 .retryPolicy(new RetryOneTime(1000))
                 .namespace("test") // 命名空间，该curatorFramework创建的节点的父节点
                 .build();
+        curatorFramework.getConnectionStateListenable().addListener((client, newState) -> System.out.println("current state " + newState));
         curatorFramework.start();
         curatorFramework.blockUntilConnected();
     }

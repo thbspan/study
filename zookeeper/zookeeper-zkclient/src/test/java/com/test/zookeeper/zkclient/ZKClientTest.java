@@ -1,8 +1,11 @@
 package com.test.zookeeper.zkclient;
 
 import org.I0Itec.zkclient.IZkDataListener;
+import org.I0Itec.zkclient.IZkStateListener;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.Watcher;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,9 +16,35 @@ public class ZKClientTest {
 
     @BeforeEach
     public void init() {
-        zkClient = new ZkClient(serverString, 10_000, 10_000);
+        zkClient = new ZkClient(serverString, 60_000, 5_000);
     }
 
+    @AfterEach
+    public void close() {
+        zkClient.close();
+    }
+
+    @Test
+    public void testIZkStateListener() {
+        // System.out.println(zkClient.getChildren("/services"));
+        zkClient.subscribeStateChanges(new IZkStateListener() {
+            @Override
+            public void handleStateChanged(Watcher.Event.KeeperState state) throws Exception {
+                System.out.println(state);
+            }
+
+            @Override
+            public void handleNewSession() throws Exception {
+                System.out.println("new session");
+            }
+
+            @Override
+            public void handleSessionEstablishmentError(Throwable error) throws Exception {
+                error.printStackTrace();
+            }
+        });
+        System.out.println(zkClient.getChildren("/demo"));
+    }
     /**
      * 创建节点
      */
