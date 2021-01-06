@@ -23,6 +23,7 @@ import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import org.apache.curator.retry.RetryNTimes;
 import org.apache.curator.retry.RetryOneTime;
 import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,8 +58,12 @@ public class CuratorClientTest {
      */
     @Test
     public void create() throws Exception {
-        // 创建一个持久化节点，初始化内容为空
-        curatorFramework.create().forPath("/dus");
+        try {
+            // 创建一个持久化节点，初始化内容为空
+            curatorFramework.create().forPath("/dus");
+        } catch (KeeperException.NodeExistsException ignore) {
+            // 忽略节点已经存在的报错
+        }
         // 创建一个持久化节点，初始化内容不为空
         curatorFramework.create().forPath("/dus1", "test".getBytes());
         // 创建一个临时节点  初始化内容为空
@@ -214,6 +219,11 @@ public class CuratorClientTest {
     @Test
     public void treeCache() throws Exception {
         String path = "/trade";
+        try {
+            curatorFramework.delete().deletingChildrenIfNeeded().forPath(path);
+        } catch (KeeperException.NoNodeException ignore) {
+        }
+
         TreeCache treeCache = new TreeCache(curatorFramework, path);
         // 调用start方法开始监听
         treeCache.start();
@@ -221,8 +231,8 @@ public class CuratorClientTest {
         treeCache.getListenable().addListener(
                 (client, event) -> System.out.println("监听到节点数据变化，类型：" + event.getType() + ",内容：" + event.getData()));
         Thread.sleep(1000);
-        //更新父节点数据
-        curatorFramework.setData().forPath(path, "333".getBytes());
+        //创建父节点数据
+        curatorFramework.create().creatingParentsIfNeeded().forPath(path, "333".getBytes());
         Thread.sleep(1000);
         String childNodePath = path + "/child";
         //创建子节点
