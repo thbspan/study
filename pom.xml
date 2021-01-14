@@ -28,6 +28,7 @@
         <module>redis</module>
         <module>jjwt</module>
         <module>arthas</module>
+        <module>cglib-test</module>
     </modules>
 
     <dependencyManagement>
