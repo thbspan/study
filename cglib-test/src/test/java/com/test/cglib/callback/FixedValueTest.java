@@ -10,6 +10,7 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.FixedValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * 返回固定值测试类
@@ -22,7 +23,10 @@ public class FixedValueTest {
         enhancer.setCallback((FixedValue) () -> "hello cglib!");
         Example example = (Example) enhancer.create();
 
+        assertEquals("hello cglib!", example.toString());
         assertEquals("hello cglib!", example.test(null));
+        //Object#hashCode
+        assertThrows(ClassCastException.class, example::hashCode);
     }
 
     @Test
