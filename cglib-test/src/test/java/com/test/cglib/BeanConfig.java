@@ -22,4 +22,12 @@ public class BeanConfig {
     public String test2() {
         return "test2" + t1();
     }
+
+    public String test3() {
+        return "test3" + t1();
+    }
+
+    public String test4() {
+        return "test4";
+    }
 }

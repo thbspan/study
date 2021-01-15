@@ -21,5 +21,7 @@ public class BeanMethodEnhancerTest {
         System.out.println(config.t1());
         System.out.println(config.test1());
         System.out.println(config.test2());
+        System.out.println(config.test3());
+        System.out.println(config.test4());
     }
 }
