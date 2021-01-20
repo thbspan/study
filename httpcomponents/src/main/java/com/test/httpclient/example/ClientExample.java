@@ -1,19 +1,11 @@
 package com.test.httpclient.example;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509ExtendedTrustManager;
 
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -30,6 +22,7 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -43,6 +36,7 @@ public class ClientExample {
 
     private static final String USER_AGENT_CHROME = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36";
     private static final RequestConfig DEFAULT_REQUEST_CONFIG = RequestConfig.custom()
+            .setConnectionRequestTimeout(DEFAULT_TIMEOUT)
             .setConnectTimeout(DEFAULT_TIMEOUT)
             .setSocketTimeout(DEFAULT_TIMEOUT)
             .setCircularRedirectsAllowed(true)
@@ -55,8 +49,7 @@ public class ClientExample {
                     RegistryBuilder.<ConnectionSocketFactory>create()
                             .register("http", PlainConnectionSocketFactory.getSocketFactory())
                             .register("https", createSSLConnectionSocketFactory())
-                            .build()
-            );
+                            .build(), null, null, null, DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
             connectionManager.setMaxTotal(500);
             connectionManager.setDefaultMaxPerRoute(100);
             connectionManager.setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(DEFAULT_TIMEOUT).build());
@@ -65,10 +58,11 @@ public class ClientExample {
                     .setDefaultRequestConfig(DEFAULT_REQUEST_CONFIG)
                     .setConnectionManager(connectionManager)
                     .evictExpiredConnections()
-                    .evictIdleConnections(2 * DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS)
+                    .evictIdleConnections(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS)
                     .setRedirectStrategy(new LaxRedirectStrategy())
 //                    .setServiceUnavailableRetryStrategy(new DefaultServiceUnavailableRetryStrategy())
                     .setUserAgent(USER_AGENT_CHROME)
+                    .setRetryHandler(new DefaultHttpRequestRetryHandler(2, true))
 //                    .setContentDecoderRegistry()
                     .build();
             // shutdown hook
@@ -114,47 +108,5 @@ public class ClientExample {
         SSLContext sslContext = SSLContext.getInstance(SSLConnectionSocketFactory.TLS);
         sslContext.init(null, new TrustManager[]{new InsecureTrustManager()}, null);
         return new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
-    }
-}
-
-class InsecureTrustManager extends X509ExtendedTrustManager {
-    private final Set<X509Certificate> acceptedIssuers_ = new HashSet<>();
-
-    @Override
-    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        acceptedIssuers_.addAll(Arrays.asList(chain));
-    }
-
-    @Override
-    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        acceptedIssuers_.addAll(Arrays.asList(chain));
-    }
-
-    @Override
-    public void checkClientTrusted(X509Certificate[] chain, String authType, Socket socket) throws CertificateException {
-        acceptedIssuers_.addAll(Arrays.asList(chain));
-    }
-
-    @Override
-    public void checkServerTrusted(X509Certificate[] chain, String authType, Socket socket) throws CertificateException {
-        acceptedIssuers_.addAll(Arrays.asList(chain));
-    }
-
-    @Override
-    public void checkClientTrusted(X509Certificate[] chain, String authType, SSLEngine sslEngine) throws CertificateException {
-        acceptedIssuers_.addAll(Arrays.asList(chain));
-    }
-
-    @Override
-    public void checkServerTrusted(X509Certificate[] chain, String authType, SSLEngine sslEngine) throws CertificateException {
-        acceptedIssuers_.addAll(Arrays.asList(chain));
-    }
-
-    @Override
-    public X509Certificate[] getAcceptedIssuers() {
-        if (acceptedIssuers_.isEmpty()) {
-            return new X509Certificate[0];
-        }
-        return acceptedIssuers_.toArray(new X509Certificate[0]);
     }
 }
