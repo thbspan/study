@@ -1,4 +1,4 @@
-package com.test.reactor;
+package com.test.reactor.pattern;
 
 import java.util.ArrayList;
 import java.util.List;

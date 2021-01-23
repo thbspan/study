@@ -1,4 +1,4 @@
-package com.test.reactor;
+package com.test.reactor.pattern;
 
 import java.util.List;
 import java.util.Map;

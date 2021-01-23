@@ -1,4 +1,4 @@
-package com.test.reactor;
+package com.test.reactor.pattern;
 
 /**
  * <b>Reactor demo</b> <br/>

@@ -29,6 +29,7 @@
         <module>jjwt</module>
         <module>arthas</module>
         <module>cglib-test</module>
+        <module>rsocket-test</module>
     </modules>
 
     <dependencyManagement>

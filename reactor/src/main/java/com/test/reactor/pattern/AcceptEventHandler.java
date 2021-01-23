@@ -1,4 +1,4 @@
-package com.test.reactor;
+package com.test.reactor.pattern;
 
 public class AcceptEventHandler extends EventHandler {
 
