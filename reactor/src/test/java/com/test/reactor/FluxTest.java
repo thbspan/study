@@ -1,12 +1,17 @@
 package com.test.reactor;
 
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
+import reactor.core.publisher.BaseSubscriber;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -176,5 +181,148 @@ public class FluxTest {
                 .map(i -> 10 / (3 - i))
                 .retry(1)
                 .subscribe(System.out::println, System.err::println);
+    }
+
+    @Test
+    public void testSubscribe() {
+        Flux<Integer> ints = Flux.range(1, 4);
+        ints.subscribe(System.out::println,
+                error -> System.err.println("Error " + error),
+                () -> System.out.println("Done"),
+                // 从源数据中获取最多多少个元素
+                sub -> sub.request(10));
+
+        Flux.range(1, 4)
+                .subscribe(new BaseSubscriber<Integer>() {
+                    @Override
+                    protected void hookOnSubscribe(Subscription subscription) {
+                        System.out.println("Subscribed");
+                        request(1);
+                    }
+
+                    @Override
+                    protected void hookOnNext(Integer value) {
+                        System.out.println(value);
+                        request(1);
+                    }
+
+                    @Override
+                    protected void hookOnComplete() {
+                        super.hookOnComplete();
+                    }
+
+                    @Override
+                    protected void hookOnError(Throwable throwable) {
+                        super.hookOnError(throwable);
+                    }
+
+                    @Override
+                    protected void hookOnCancel() {
+                        System.out.println("Canceled!");
+                    }
+                });
+    }
+
+    @Test
+    public void testBuffer() {
+        Flux<String> stringFlux = Flux.just("a", "b", "c", "d", "e", "f", "g");
+        StepVerifier.create(stringFlux)
+                .expectNext("a", "b", "c", "d", "e", "f", "g")
+                .verifyComplete();
+        // 缓冲
+        StepVerifier.create(stringFlux.buffer(2))
+                .expectNext(Arrays.asList("a", "b"), Arrays.asList("c", "d"), Arrays.asList("e", "f"),
+                        Collections.singletonList("g"))
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    public void testConcurrencyAndPrefetch() {
+        int concurrency = 3;
+        int prefetch = 6;
+        Flux.range(1, 100)
+                .log()
+                .flatMap(i -> Flux.just(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).log(),
+                        concurrency, prefetch)
+                .subscribe();
+
+    }
+
+    @Test
+    public void testBackpressure() {
+        Flux<String> flux = Flux.range(1, 10)
+                .map(String::valueOf)
+                .log();
+        flux.subscribe(new Subscriber<String>() {
+            private int count = 0;
+            private Subscription subscription;
+            private final int requestCount = 2;
+
+            @Override
+            public void onSubscribe(Subscription s) {
+                this.subscription = s;
+                s.request(requestCount);  // 启动
+            }
+
+            @Override
+            public void onNext(String s) {
+                count++;
+                if (count == requestCount) {  // 通过count控制每次request两个元素
+                    try {
+                        // 处理完两个元素后休息一下
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    subscription.request(requestCount);
+                    count = 0;
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+        System.out.println("======================");
+        // 使用 BaseSubscriber 实现 Subscription 类似的功能
+        flux.subscribe(new BaseSubscriber<String>() {
+            private final int requestCount = 2;
+            private int count = 0;
+
+            @Override
+            protected void hookOnSubscribe(Subscription subscription) {
+                request(requestCount);
+            }
+
+            @Override
+            protected void hookOnNext(String value) {
+                count++;
+                if (count == requestCount) { // 通过count控制每次request两个元素
+                    try {
+                        // 处理完两个元素后休息一下
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    request(requestCount);
+                    count = 0;
+                }
+            }
+        });
+        System.out.println("======================");
+        // 使用limitRate
+        flux.limitRate(2)
+                .subscribe();
+        System.out.println("======================");
+        // 限制处理元素的数量
+        flux.limitRequest(3)
+                .subscribe();
     }
 }
