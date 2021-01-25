@@ -1,9 +1,13 @@
 package com.test.reactor;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
+import java.util.StringJoiner;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +30,6 @@ public class FluxTest {
         // 订阅并打印数据流（有多个重载方法）
         flux.subscribe(System.out::println);
         flux.subscribe(System.out::println, System.out::println, () -> System.out.println("Completed!"));
-        System.out.println(Flux.just());
     }
 
     @Test
@@ -324,5 +327,66 @@ public class FluxTest {
         // 限制处理元素的数量
         flux.limitRequest(3)
                 .subscribe();
+    }
+
+    @Test
+    public void testConcatMap() {
+        Student st1 = new Student("张三", 90);
+        Student st2 = new Student("李四", 91);
+        Student st3 = new Student("王二", 87);
+        Student st4 = new Student("李逵", 97);
+        Student st5 = new Student("宋江", 85);
+        List<Student> list1 = new ArrayList<>();
+        list1.add(st1);
+        list1.add(st2);
+        list1.add(st5);
+        List<Student> list2 = new ArrayList<>();
+        list2.add(st3);
+        list2.add(st4);
+        Teacher t1 = new Teacher(list1);
+        Teacher t2 = new Teacher(list2);
+        List<Teacher> teachers = Arrays.asList(t1, t2);
+        Flux.fromIterable(teachers).concatMap(t -> Flux.fromIterable(t.getStudents()))
+                .sort(Comparator.comparingInt(Student::getAge))
+                .subscribe(System.out::println);
+
+    }
+
+    static class Student {
+        private final String name;
+        private final int age;
+
+        public Student(String name, int age) {
+            this.name = name;
+            this.age = age;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        @Override
+        public String toString() {
+            return new StringJoiner(", ", Student.class.getSimpleName() + "[", "]")
+                    .add("name='" + name + "'")
+                    .add("age=" + age)
+                    .toString();
+        }
+    }
+
+    static class Teacher {
+        private final List<Student> students;
+
+        public Teacher(List<Student> students) {
+            this.students = students;
+        }
+
+        public List<Student> getStudents() {
+            return students;
+        }
     }
 }
