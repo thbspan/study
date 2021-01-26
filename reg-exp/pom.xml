@@ -14,8 +14,4 @@
     <name>reg-exp</name>
     <description>reg exp</description>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
 </project>
