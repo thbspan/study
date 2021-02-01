@@ -17,6 +17,7 @@ import org.reactivestreams.Subscription;
 
 import reactor.core.publisher.BaseSubscriber;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
@@ -25,7 +26,13 @@ public class FluxTest {
 
     @Test
     public void testJust() {
-        Flux<Integer> flux = Flux.just(1, 2, 3);
+        // 开启调试模式
+        Hooks.onOperatorDebug();
+        Flux<Integer> flux = Flux.just(1, 2, 3)
+                // 帮助问题定位，可以打印调试信息
+                .checkpoint()
+                // 记录日志
+                .log();
         System.out.println(flux);
         // 订阅并打印数据流（有多个重载方法）
         flux.subscribe(System.out::println);
