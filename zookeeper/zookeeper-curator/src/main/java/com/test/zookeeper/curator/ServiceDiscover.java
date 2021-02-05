@@ -1,4 +1,4 @@
-package com.test.zookeeper;
+package com.test.zookeeper.curator;
 
 import java.io.IOException;
 import java.util.Map;
@@ -12,7 +12,7 @@ import org.apache.curator.x.discovery.ServiceProvider;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 import org.apache.curator.x.discovery.strategies.RandomStrategy;
 
-import com.test.zookeeper.domain.ServerPayload;
+import com.test.zookeeper.curator.domain.ServerPayload;
 
 public class ServiceDiscover {
     private final ServiceDiscovery<ServerPayload> serviceDiscovery;

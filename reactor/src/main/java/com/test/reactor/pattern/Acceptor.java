@@ -8,7 +8,7 @@ public class Acceptor implements Runnable {
 
     private final Demultiplexer selector;
 
-    private BlockingQueue<Source> sourceQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Source> sourceQueue = new LinkedBlockingQueue<>();
 
     public Acceptor(Demultiplexer selector, int port) {
         this.port = port;

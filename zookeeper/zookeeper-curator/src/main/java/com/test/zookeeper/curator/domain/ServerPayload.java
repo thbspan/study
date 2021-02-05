@@ -1,4 +1,4 @@
-package com.test.zookeeper.domain;
+package com.test.zookeeper.curator.domain;
 
 public class ServerPayload {
     private String name;

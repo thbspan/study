@@ -21,6 +21,7 @@ public class ZkClientUtilTest {
     @Test
     public void testCreate() throws KeeperException, InterruptedException {
         String response = ZkClientUtil.getZKConnection().create("/test", "test".getBytes(),
+                // acl -> word:anyone:crwda
                 ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
         LOGGER.info(response);
     }

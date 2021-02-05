@@ -10,17 +10,11 @@ import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 
 import com.test.zookeeper.curator.domain.ServerPayload;
 
-/**
- * 服务注册
- */
 public class ServiceRegistry {
-    private ServiceDiscovery<ServerPayload> serviceDiscovery;
-
-    private final CuratorFramework curatorFramework;
+    private final ServiceDiscovery<ServerPayload> serviceDiscovery;
 
     public ServiceRegistry(CuratorFramework curatorFramework, String basePath) {
-        this.curatorFramework = curatorFramework;
-        serviceDiscovery = ServiceDiscoveryBuilder.builder(ServerPayload.class)
+        this.serviceDiscovery = ServiceDiscoveryBuilder.builder(ServerPayload.class)
                 .client(curatorFramework)
                 .serializer(new JsonInstanceSerializer<>(ServerPayload.class))
                 .basePath(basePath)
@@ -55,4 +49,3 @@ public class ServiceRegistry {
         serviceDiscovery.close();
     }
 }
-

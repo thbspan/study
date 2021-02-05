@@ -14,8 +14,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.test.zookeeper.ServiceRegistry;
-import com.test.zookeeper.domain.ServerPayload;
+import com.test.zookeeper.curator.domain.ServerPayload;
 
 public class ServiceRegistryTest {
     public static final String BASE_PATH = "services";
@@ -45,7 +44,7 @@ public class ServiceRegistryTest {
 
     @Test
     public void testRegistry() throws Exception {
-        ServiceRegistry serviceRegistry = new ServiceRegistry(curatorFramework, BASE_PATH);
+        com.test.zookeeper.curator.ServiceRegistry serviceRegistry = new ServiceRegistry(curatorFramework, BASE_PATH);
         {
             ServiceInstance<ServerPayload> instance = ServiceInstance.<ServerPayload>builder()
                     .id("instance11")

@@ -10,8 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.test.zookeeper.ServiceDiscover;
-import com.test.zookeeper.domain.ServerPayload;
+import com.test.zookeeper.curator.domain.ServerPayload;
 
 public class ServiceDiscoverTest {
 
