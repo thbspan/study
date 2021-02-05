@@ -14,6 +14,7 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.atomic.DistributedAtomicInteger;
 import org.apache.curator.framework.recipes.barriers.DistributedBarrier;
 import org.apache.curator.framework.recipes.barriers.DistributedDoubleBarrier;
+import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.NodeCache;
 import org.apache.curator.framework.recipes.cache.PathChildrenCache;
 import org.apache.curator.framework.recipes.cache.TreeCache;
@@ -50,7 +51,7 @@ public class CuratorClientTest {
     }
 
     @AfterEach
-    public void after() {
+    public void after() throws Exception {
         curatorFramework.close();
     }
 
@@ -143,7 +144,7 @@ public class CuratorClientTest {
     /**
      * cursor事件处理，curator能够自动为开发人员处理反复注册监听
      * <br/>
-     * <b>NodeCache：监听节点对应增、删、改操作</b>
+     * <b>NodeCache：监听节点数据的变化（不用关心节点是否存在）</b>
      */
     @Test
     public void nodeCache() throws Exception {
@@ -152,16 +153,21 @@ public class CuratorClientTest {
         NodeCache nodeCache = new NodeCache(curatorFramework, "/trade", false);
         // buildInitial：如果设置为true 则NodeCache在第一次启动的时候就会立刻从ZK上读取对应节点的数据内容 保存到Cache中。
         // 调用start方法开始监听
-        nodeCache.start(false);
+        nodeCache.start(true);
+        ChildData currentData = nodeCache.getCurrentData();
+        if (currentData != null) {
+            // 设置 buildInitial = true后可以得到初始值
+            System.out.println("node init value" + new String(currentData.getData(), StandardCharsets.UTF_8));
+        }
         nodeCache.getListenable().addListener(
-                () -> System.out.println("Node data update , new data:" + new String(nodeCache.getCurrentData().getData())));
+                () -> System.out.println("Node data update , new data:" + new String(nodeCache.getCurrentData().getData(), StandardCharsets.UTF_8)));
         //******************** 监听一个不存在的节点 当节点被创建后，也会触发监听器 **********************//
         // client : Curator 客户端实例 。 path: 监听节点的节点路径 。 dataIsCompressed：是否进行数据压缩
         NodeCache nodeCache2 = new NodeCache(curatorFramework, "/trade1", false);
         // buildInitial：如果设置为true 则NodeCache在第一次启动的时候就会立刻从ZK上读取对应节点的数据内容 保存到Cache中。
         nodeCache2.start(false);
         nodeCache2.getListenable().addListener(
-                () -> System.out.println("Node data update , new data:" + new String(nodeCache.getCurrentData().getData())));
+                () -> System.out.println("Node1 data update , new data:" + new String(nodeCache2.getCurrentData().getData(), StandardCharsets.UTF_8)));
         Thread.sleep(Integer.MAX_VALUE);
     }
 
@@ -205,7 +211,7 @@ public class CuratorClientTest {
                     break;
             }
         });
-        curatorFramework.create().withMode(CreateMode.PERSISTENT).forPath("/trade/PathChildrenCache", "new".getBytes());
+        curatorFramework.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).forPath("/trade/PathChildrenCache", "new".getBytes());
         Thread.sleep(100L);
         curatorFramework.setData().forPath("/trade/PathChildrenCache", "update".getBytes());
         Thread.sleep(100L);
@@ -215,7 +221,7 @@ public class CuratorClientTest {
     /**
      * 基本同{@link #pathChildrenCache()}、{@link #nodeCache()}，
      * <br/>
-     * <b>可以将指定的路径节点作为根节点，对其所有的子节点操作进行监听(包括后代节点)，呈现树形目录的监听</b>
+     * <b>可以将指定的路径节点作为根节点，对其所有的子节点操作进行监听(包括后代节点)，呈现树形目录的监听(功能很强大)</b>
      */
     @Test
     public void treeCache() throws Exception {
@@ -286,7 +292,7 @@ public class CuratorClientTest {
     @Test
     public void testDistributedLock() throws InterruptedException {
         InterProcessMutex lock = new InterProcessMutex(curatorFramework, "/trade/mylock");
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 3; i++) {
             Thread currentThread = new Thread(() -> {
                 try {
                     // 加锁
@@ -317,6 +323,7 @@ public class CuratorClientTest {
     public void testDistributedAtomicInteger() throws Exception {
         DistributedAtomicInteger distributedAtomicInteger = new DistributedAtomicInteger(curatorFramework,
                 "/trade/PathChildrenCache", new RetryNTimes(1000, 3));
+        System.out.println(distributedAtomicInteger.increment().postValue());
         System.out.println(distributedAtomicInteger.increment().postValue());
     }
 
