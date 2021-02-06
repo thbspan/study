@@ -27,22 +27,18 @@ public class ServiceDiscover {
     }
 
     public ServiceInstance<ServerPayload> getServiceProvider(String serviceName) throws Exception {
-        ServiceProvider<ServerPayload> provider = serviceProviderMap.get(serviceName);
-        if (provider == null) {
-            provider = serviceDiscovery.serviceProviderBuilder()
-                    .serviceName(serviceName)
+        return serviceProviderMap.computeIfAbsent(serviceName, name -> {
+            ServiceProvider<ServerPayload> serviceProvider = serviceDiscovery.serviceProviderBuilder()
+                    .serviceName(name)
                     .providerStrategy(new RandomStrategy<>())
                     .build();
-
-            ServiceProvider<ServerPayload> oldProvider = serviceProviderMap.putIfAbsent(serviceName, provider);
-            if (oldProvider != null) {
-                provider = oldProvider;
-            } else {
-                provider.start();
+            try {
+                serviceProvider.start();
+                return serviceProvider;
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
             }
-        }
-
-        return provider.getInstance();
+        }).getInstance();
     }
 
     public void start() throws Exception {
@@ -50,12 +46,10 @@ public class ServiceDiscover {
     }
 
     public void close() throws IOException {
-        for (Map.Entry<String, ServiceProvider<ServerPayload>> me : serviceProviderMap.entrySet()){
-            try{
+        for (Map.Entry<String, ServiceProvider<ServerPayload>> me : serviceProviderMap.entrySet()) {
+            try {
                 me.getValue().close();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+            } catch (Exception ignored) { }
         }
         serviceDiscovery.close();
     }
