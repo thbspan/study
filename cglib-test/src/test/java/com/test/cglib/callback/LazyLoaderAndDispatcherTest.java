@@ -17,7 +17,11 @@ public class LazyLoaderAndDispatcherTest {
         bean.setId(2);
         assertEquals(2, bean.getId());
         AnotherBean anotherBean = bean.getAnotherBean();
+        System.out.println(System.identityHashCode(anotherBean));
         System.out.println(anotherBean.getClass());
+        System.out.println("=============");
+        System.out.println(anotherBean.hashCode());
+        System.out.println("=============");
         System.out.println(anotherBean);
         assertEquals(8, anotherBean.getValue());
 
