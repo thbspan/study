@@ -23,14 +23,14 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.apache.http.impl.client.DefaultServiceUnavailableRetryStrategy;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 
 public class ClientExample {
-    private static final int DEFAULT_TIMEOUT = 30000;
-    private static final String DEFAULT_CHARSET = "UTF-8";
+    private static final int DEFAULT_TIMEOUT = 30_000;
 
     private static final CloseableHttpClient HTTP_CLIENT;
 
@@ -52,6 +52,7 @@ public class ClientExample {
                             .build(), null, null, null, DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
             connectionManager.setMaxTotal(500);
             connectionManager.setDefaultMaxPerRoute(100);
+            connectionManager.setValidateAfterInactivity(10_000);
             connectionManager.setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(DEFAULT_TIMEOUT).build());
 
             HTTP_CLIENT = HttpClients.custom()
@@ -60,10 +61,10 @@ public class ClientExample {
                     .evictExpiredConnections()
                     .evictIdleConnections(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS)
                     .setRedirectStrategy(new LaxRedirectStrategy())
-//                    .setServiceUnavailableRetryStrategy(new DefaultServiceUnavailableRetryStrategy())
+                    .setServiceUnavailableRetryStrategy(new DefaultServiceUnavailableRetryStrategy())
                     .setUserAgent(USER_AGENT_CHROME)
                     .setRetryHandler(new DefaultHttpRequestRetryHandler(2, true))
-//                    .setContentDecoderRegistry()
+                    // .setContentDecoderRegistry()
                     .build();
             // shutdown hook
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -107,6 +108,8 @@ public class ClientExample {
     private static ConnectionSocketFactory createSSLConnectionSocketFactory() throws Exception {
         SSLContext sslContext = SSLContext.getInstance(SSLConnectionSocketFactory.TLS);
         sslContext.init(null, new TrustManager[]{new InsecureTrustManager()}, null);
-        return new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
+        // jdk1.8 261之后支持tls1.3
+        return new SSLConnectionSocketFactory(sslContext, new String[]{"TLSv1.3", "TLSv1.2", "TLSv1.1", "TLSv1", "SSLv3"},
+                null, NoopHostnameVerifier.INSTANCE);
     }
 }
