@@ -1,5 +1,6 @@
 package com.test.cglib;
 
+import com.test.cglib.annotation.Bean;
 import com.test.cglib.callback.BeanMethodInterceptor;
 
 import net.sf.cglib.core.DefaultGeneratorStrategy;
@@ -7,6 +8,9 @@ import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.NoOp;
 
+/**
+ * 模拟spring实现{@link Bean}注解增强
+ */
 public class BeanMethodEnhancer {
     private static final Callback[] CALLBACKS = new Callback[]{
             new BeanMethodInterceptor(),

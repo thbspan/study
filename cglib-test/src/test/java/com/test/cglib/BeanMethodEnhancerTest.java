@@ -2,6 +2,11 @@ package com.test.cglib;
 
 import org.junit.jupiter.api.Test;
 
+import com.test.cglib.annotation.Bean;
+
+/**
+ * {@link Bean}注解增强测试类
+ */
 public class BeanMethodEnhancerTest {
 
     @Test
