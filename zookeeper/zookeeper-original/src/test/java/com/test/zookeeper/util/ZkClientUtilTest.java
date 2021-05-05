@@ -35,7 +35,7 @@ public class ZkClientUtilTest {
         //StringCallback 异步回调  ctx:用于传递给回调方法的一个参数。通常是放一个上下文(Context)信息
         ZkClientUtil.getZKConnection().create("/test2", "test".getBytes(),
                 ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL, (returnCode, path, ctx, name) -> {
-                    LOGGER.info("rc:{}, path={}, ctx={}", returnCode, path, name);
+                    LOGGER.info("rc:{}, path={}, ctx={}", returnCode, path, ctx);
                     countDownLatch.countDown();
                 }, "1212121");
         countDownLatch.await();
@@ -46,8 +46,8 @@ public class ZkClientUtilTest {
      */
     @Test
     public void delete() throws Exception {
-        // version 表示此次删除针对于的版本号。 传-1 表示不忽略版本号
-        ZkClientUtil.getZKConnection().delete("/aa", -1);
+        // version 表示此次删除针对于的版本号。 版本号一致才会删除，-1可以绕过这个机制，即不管数据的版本号而将它直接删除
+        ZkClientUtil.getZKConnection().delete("/test", -1);
     }
 
     /**
@@ -73,9 +73,10 @@ public class ZkClientUtilTest {
         // Watcher : 注册的Watcher。一旦在本次获取子节点之后，子节点列表发生变更的话，就会向该Watcher发送通知。Watcher仅会被触发一次。
         // state: 获取指定数据节点(也就是path参数对应的节点)的状态信息(无节点名和数据内容)，传入旧的state将会被来自服务端响应的新state对象替换。
         List<String> list = ZkClientUtil.getZKConnection().getChildren("/",
-                event -> LOGGER.info("我是监听事件，监听子节点变化"), stat);
+                event -> LOGGER.info("我是监听事件，监听子节点变化{}", event), stat);
         LOGGER.info("child={}", list);
         LOGGER.info("path state={}", stat);
+        Thread.sleep(5_000);
     }
 
     /**

@@ -24,7 +24,7 @@ public class ZkClientUtil {
                 connectedSemaphore.countDown();
             });
         } catch (Exception e) {
-            e.printStackTrace(System.err);
+            LOGGER.error("init zookeeper client exception", e);
         }
     }
 
@@ -35,10 +35,9 @@ public class ZkClientUtil {
             }
             return zooKeeper;
         } catch (Exception e) {
-            e.printStackTrace(System.err);
+            LOGGER.error("get zookeeper client exception", e);
             throw new IllegalStateException(e);
         }
     }
-
 
 }
