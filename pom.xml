@@ -32,6 +32,7 @@
         <module>arthas</module>
         <module>cglib-test</module>
         <module>rsocket-test</module>
+        <module>httpclient5</module>
     </modules>
 
     <dependencyManagement>
