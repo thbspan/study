@@ -21,5 +21,10 @@
             <artifactId>httpclient5-fluent</artifactId>
             <version>${httpclient5.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
