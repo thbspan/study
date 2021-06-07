@@ -23,11 +23,12 @@ public class TypeVariableTest<T extends Number & Serializable, V> {
         Type type = field.getGenericType();
         System.out.println(type.getClass());
     }
+
     @Test
     public void testMethod() throws NoSuchMethodException {
         Method method = TypeVariableTest.class.getDeclaredMethod("getMapper");
         Type returnType = method.getGenericReturnType();
-        Assertions.assertTrue(TypeVariable.class.isAssignableFrom(returnType.getClass()) );// true
+        Assertions.assertTrue(TypeVariable.class.isAssignableFrom(returnType.getClass()));// true
         TypeVariable<?> typeVariable = (TypeVariable<?>) returnType;
         // 获取 T extends Number & Serializable 中 extends后面的内容；没有默认Object
         for (Type bound : typeVariable.getBounds()) {
@@ -39,7 +40,7 @@ public class TypeVariableTest<T extends Number & Serializable, V> {
         System.out.println(typeVariable.getGenericDeclaration());
     }
 
-    public <S> S getMapper(){
+    public <S> S getMapper() {
         return null;
     }
 

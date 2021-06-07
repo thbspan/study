@@ -27,9 +27,9 @@ public class GenericArrayTypeTest {
 
         type = getFieldType("strings");
 
-        Assertions.assertTrue(GenericArrayType.class.isAssignableFrom(type.getClass()) );// false
+        Assertions.assertFalse(GenericArrayType.class.isAssignableFrom(type.getClass()) );// false
         type = getMethodGenericReturnType("getArray2");
-        Assertions.assertTrue(GenericArrayType.class.isAssignableFrom(type.getClass()) );// false
+        Assertions.assertFalse(GenericArrayType.class.isAssignableFrom(type.getClass()) );// false
     }
     private Type getMethodGenericReturnType(String name) throws NoSuchMethodException {
         Method method = GenericArrayTypeTest.class.getDeclaredMethod(name);

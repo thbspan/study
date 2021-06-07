@@ -96,7 +96,7 @@ public class GenericTokenParser {
                 }
                 if (end == -1) {
                     // 没有找到结束符号
-                    builder.append(src, start, src.length -start);
+                    builder.append(src, start, src.length - start);
                     offset = src.length;
                 } else {
                     builder.append(handler.handleToken(expression.toString()));
