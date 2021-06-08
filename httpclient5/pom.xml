@@ -13,6 +13,7 @@
 
     <properties>
         <httpclient5.version>5.1</httpclient5.version>
+        <httpcore5.version>5.1.1</httpcore5.version>
     </properties>
 
     <dependencies>
@@ -20,6 +21,15 @@
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5-fluent</artifactId>
             <version>${httpclient5.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5-reactive</artifactId>
+            <version>${httpcore5.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.reactivex.rxjava2</groupId>
+            <artifactId>rxjava</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
