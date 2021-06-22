@@ -134,7 +134,10 @@ public class FluxTest {
                 .publishOn(Schedulers.parallel()).flatMap(s -> Flux.fromArray(s.split("")))
                 // subscribeOn无论出现在什么位置，都只影响源头的执行环境，也就是range方法是执行在single单线程中的，直至被第一个publishOn切换调度器之前
                 .subscribeOn(Schedulers.single())
-                .subscribe(System.out::println, System.err::println, countDownLatch::countDown);
+                .subscribe(System.out::println, throwable -> {
+                    System.err.println(throwable);
+                    countDownLatch.countDown();
+                }, countDownLatch::countDown);
         countDownLatch.await(5, TimeUnit.SECONDS);
     }
 
