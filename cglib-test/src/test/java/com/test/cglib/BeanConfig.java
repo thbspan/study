@@ -27,7 +27,21 @@ public class BeanConfig {
         return "test3" + t1();
     }
 
+    @Bean
     public String test4() {
-        return "test4";
+        return "test4" + t11();
+    }
+
+    @Bean
+    public String test5() {
+        return "test5" + t11();
+    }
+
+    /**
+     * 私有方法测试
+     */
+    @Bean
+    private T1 t11() {
+        return new T1();
     }
 }

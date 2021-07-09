@@ -27,6 +27,8 @@ public class BeanMethodEnhancerTest {
         System.out.println(config.test1());
         System.out.println(config.test2());
         System.out.println(config.test3());
+        // 测试拦截私有方法
         System.out.println(config.test4());
+        System.out.println(config.test5());
     }
 }
