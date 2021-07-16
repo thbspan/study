@@ -19,11 +19,28 @@ public class BeanMethodEnhancer {
 
     private static final ConditionalCallbackFilter CALLBACK_FILTER = new ConditionalCallbackFilter(CALLBACKS);
 
-    public Class<?> enhance(Class<?> beanClass) {
+    public Class<?> enhanceClass(Class<?> beanClass) {
         if (EnhancedConfiguration.class.isAssignableFrom(beanClass)) {
             return beanClass;
         }
 
+        Enhancer enhancer = createEnhancer(beanClass);
+        Class<?> subclass = enhancer.createClass();
+        Enhancer.registerStaticCallbacks(subclass, CALLBACKS);
+        return subclass;
+    }
+
+    public Object enhanceObject(Class<?> beanClass) {
+        if (EnhancedConfiguration.class.isAssignableFrom(beanClass)) {
+            return beanClass;
+        }
+
+        Enhancer enhancer = createEnhancer(beanClass);
+        enhancer.setCallbacks(CALLBACKS);
+        return enhancer.create();
+    }
+
+    private Enhancer createEnhancer(Class<?> beanClass) {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(beanClass);
         enhancer.setInterfaces(new Class<?>[]{EnhancedConfiguration.class});
@@ -32,8 +49,6 @@ public class BeanMethodEnhancer {
         enhancer.setStrategy(DefaultGeneratorStrategy.INSTANCE);
         enhancer.setCallbackFilter(CALLBACK_FILTER);
         enhancer.setCallbackTypes(CALLBACK_FILTER.getCallbackTypes());
-        Class<?> subclass = enhancer.createClass();
-        Enhancer.registerStaticCallbacks(subclass, CALLBACKS);
-        return subclass;
+        return enhancer;
     }
 }
