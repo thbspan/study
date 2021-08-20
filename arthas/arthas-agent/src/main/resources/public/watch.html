@@ -7,12 +7,16 @@
     <script type="text/javascript">
         let clicked = false;
         let socket;
+
         function startWatch() {
             if (!clicked) {
                 document.getElementById("button").innerText = "停止watch";
                 clicked = true;
                 let count = 1;
                 socket = new WebSocket("ws://localhost:7000/ws/watch/consumer");
+                socket.onopen = function () {
+                    socket.send(document.getElementById("text").value);
+                };
                 socket.onmessage = function (event) {
                     const jsonStr = event.data;
                     console.log(jsonStr);
@@ -42,6 +46,7 @@
     </script>
 </head>
 <body>
+<input id="text" type="text" placeholder="Class Full Name"/>
 <button id="button" onclick="startWatch()">开始watch</button>
 <ul id="content"></ul>
 </body>

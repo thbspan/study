@@ -71,4 +71,9 @@ public class WatchReTransformer implements ClassFileTransformer {
     public void setWatchClassName(String watchClassName) {
         this.watchClassName = watchClassName;
     }
+
+    public String getWatchClassName() {
+        return watchClassName;
+    }
+
 }

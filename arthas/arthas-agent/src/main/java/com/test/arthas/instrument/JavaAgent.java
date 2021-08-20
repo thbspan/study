@@ -7,6 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -22,6 +24,10 @@ import com.test.arthas.instrument.transformer.WatchReTransformer;
 import io.javalin.Javalin;
 import io.javalin.plugin.json.JavalinJson;
 
+/**
+ * VirtualMachine 依赖jdk目录下的 tools.jar
+ * 实现参考 https://zhuanlan.zhihu.com/p/317699113
+ */
 public class JavaAgent {
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaAgent.class);
     public static Instrumentation inst;
@@ -67,18 +73,21 @@ public class JavaAgent {
         });
 
         javalin.ws("/ws/watch/consumer", wsHandler -> {
-            WatchReTransformer watchReTransformer = new WatchReTransformer();
-
-            String exampleClassName = "xxxxx";
-            wsHandler.onConnect(ctx -> {
-                String ctxSessionId = ctx.getSessionId();
-                LOGGER.info("websocket {} connected", ctxSessionId);
+            wsHandler.onConnect(ctx -> LOGGER.info("websocket connected. sessionId={}", ctx.getSessionId()));
+            ConcurrentMap<String, WatchReTransformer> watchReTransformerMap = new ConcurrentHashMap<>();
+            wsHandler.onMessage(ctx -> watchReTransformerMap.computeIfAbsent(ctx.getSessionId(), ctxSessionId -> {
+                WatchReTransformer watchReTransformer = new WatchReTransformer();
                 watchReTransformer.setWatch(true);
                 watchReTransformer.setSessionId(ctxSessionId);
+                String exampleClassName = ctx.message();
+                LOGGER.info("watching class {}", exampleClassName);
                 watchReTransformer.setWatchClassName(exampleClassName);
                 inst.addTransformer(watchReTransformer, true);
-                inst.retransformClasses(Class.forName(exampleClassName));
-                inst.removeTransformer(watchReTransformer);
+                try {
+                    inst.retransformClasses(Class.forName(exampleClassName));
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Can not class " + exampleClassName, e);
+                }
                 WatchCollector.addListener(exampleClassName, ((key, advice) -> {
                     if (!key.equals(ctxSessionId)) {
                         return;
@@ -91,17 +100,18 @@ public class JavaAgent {
                     result.put("isThrow", advice.getThrow());
                     ctx.send(JavalinJson.toJson(result));
                 }));
-            });
-            wsHandler.onMessage(wsMessageHandler -> {
+                return watchReTransformer;
+            }));
 
-            });
             wsHandler.onClose(ctx -> {
-                LOGGER.info("websocket {} closed", ctx.getSessionId());
-                watchReTransformer.setWatch(false);
-                inst.addTransformer(watchReTransformer, true);
-                inst.retransformClasses(Class.forName(exampleClassName));
-                inst.removeTransformer(watchReTransformer);
-                WatchCollector.removeListener(exampleClassName);
+                String ctxSessionId = ctx.getSessionId();
+                LOGGER.info("websocket {} closed", ctxSessionId);
+                WatchReTransformer watchReTransformer = watchReTransformerMap.get(ctxSessionId);
+                if (watchReTransformer != null) {
+                    watchReTransformer.setWatch(false);
+                    inst.removeTransformer(watchReTransformer);
+                    WatchCollector.removeListener(watchReTransformer.getWatchClassName());
+                }
             });
         });
 

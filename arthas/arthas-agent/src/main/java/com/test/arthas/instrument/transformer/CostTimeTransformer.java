@@ -7,6 +7,9 @@ import java.security.ProtectionDomain;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javassist.ByteArrayClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -14,6 +17,7 @@ import javassist.CtMethod;
 import javassist.Modifier;
 
 public class CostTimeTransformer implements ClassFileTransformer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CostTimeTransformer.class);
     private static final Set<String> OBJ_METHODS;
 
     static {
@@ -34,7 +38,7 @@ public class CostTimeTransformer implements ClassFileTransformer {
 
             String name = className.replace('/', '.');
 
-            if (!name.startsWith("com.kingdee")) {
+            if (!name.startsWith("com.test")) {
                 return classFileBuffer;
             }
             ClassPool cp = ClassPool.getDefault();
@@ -64,10 +68,10 @@ public class CostTimeTransformer implements ClassFileTransformer {
                 ctMethod.insertBefore("startCtTime=System.currentTimeMillis();");
                 ctMethod.insertAfter("CostTimeCollector.addCostTime(Thread.currentThread(), Thread.currentThread().getStackTrace(), System.currentTimeMillis() - startCtTime);");
             }
-            System.out.println("class:{} methods add cost times aspect" + className);
+            LOGGER.info("class:{} methods add cost times aspect", className);
             return cc.toBytecode();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("transform class({}) exception", className, e);
         }
         return classFileBuffer;
     }
