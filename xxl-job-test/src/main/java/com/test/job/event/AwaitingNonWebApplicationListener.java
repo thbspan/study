@@ -91,7 +91,7 @@ public class AwaitingNonWebApplicationListener implements SmartApplicationListen
         });
     }
 
-    private boolean isWebApplication(ApplicationContext applicationContext) {
+    public static boolean isWebApplication(ApplicationContext applicationContext) {
         boolean webApplication = false;
         for (String contextClass : WEB_APPLICATION_CONTEXT_CLASSES) {
             if (isAssignable(contextClass, applicationContext.getClass(), applicationContext.getClassLoader())) {

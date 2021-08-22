@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
-
 @Configuration
 public class XxlJobConfig {
     private final Logger logger = LoggerFactory.getLogger(XxlJobConfig.class);
@@ -37,9 +35,9 @@ public class XxlJobConfig {
     private int logRetentionDays;
 
     @Bean
-    public XxlJobSpringExecutor xxlJobExecutor() {
+    public CustomXxlJobSpringExecutor xxlJobExecutor() {
         logger.info(">>>>>>>>>>> xxl-job config init.");
-        XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();
+        CustomXxlJobSpringExecutor xxlJobSpringExecutor = new CustomXxlJobSpringExecutor();
         xxlJobSpringExecutor.setAdminAddresses(adminAddresses);
         xxlJobSpringExecutor.setAppname(appname);
         xxlJobSpringExecutor.setAddress(address);
@@ -50,5 +48,17 @@ public class XxlJobConfig {
         xxlJobSpringExecutor.setLogRetentionDays(logRetentionDays);
 
         return xxlJobSpringExecutor;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public String getAppname() {
+        return appname;
     }
 }
