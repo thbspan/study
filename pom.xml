@@ -36,6 +36,7 @@
         <module>httpclient5</module>
         <module>rxjava</module>
         <module>xxl-job-test</module>
+        <module>mybatis-plus</module>
     </modules>
 
     <dependencyManagement>
