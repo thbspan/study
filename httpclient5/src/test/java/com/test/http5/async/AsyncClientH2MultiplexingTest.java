@@ -8,7 +8,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
-import org.apache.hc.client5.http.async.methods.SimpleRequestBuilder;
 import org.apache.hc.client5.http.async.methods.SimpleRequestProducer;
 import org.apache.hc.client5.http.async.methods.SimpleResponseConsumer;
 import org.apache.hc.client5.http.impl.async.HttpAsyncClients;
@@ -51,10 +50,7 @@ public class AsyncClientH2MultiplexingTest {
             CountDownLatch latch = new CountDownLatch(requestUris.length);
 
             for (final String requestUri : requestUris) {
-                final SimpleHttpRequest request = SimpleRequestBuilder.get()
-                        .setHttpHost(target)
-                        .setPath(requestUri)
-                        .build();
+                final SimpleHttpRequest request =  null;
 
                 System.out.println("Executing request " + request);
                 endpoint.execute(SimpleRequestProducer.create(request),

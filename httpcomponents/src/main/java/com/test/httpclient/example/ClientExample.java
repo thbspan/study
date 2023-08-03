@@ -13,6 +13,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.config.SocketConfig;
@@ -20,6 +21,7 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
@@ -98,6 +100,19 @@ public class ClientExample {
         httpClientContext.setCredentialsProvider(credentialsProvider);
 
         try (CloseableHttpResponse httpResponse = HTTP_CLIENT.execute(httpGet, httpClientContext)) {
+            return EntityUtils.toString(httpResponse.getEntity(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public static String postJson(String url, String json) throws IOException {
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.addHeader("Content-type","application/json; charset=utf-8");
+        httpPost.setEntity(new StringEntity(json, StandardCharsets.UTF_8));
+        final HttpClientContext httpClientContext = HttpClientContext.create();
+        try (CloseableHttpResponse httpResponse = HTTP_CLIENT.execute(httpPost, httpClientContext)) {
             return EntityUtils.toString(httpResponse.getEntity(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();

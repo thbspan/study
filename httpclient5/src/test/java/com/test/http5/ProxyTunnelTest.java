@@ -6,21 +6,25 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.Socket;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.impl.classic.ProxyClient;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.net.URIBuilder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
  * Proxy tunnel demo
  */
-public class ProxyTunnelTest {
+class ProxyTunnelTest {
 
     @Test
-    public void test() throws HttpException, IOException {
+    void test() throws HttpException, IOException {
         final ProxyClient proxyClient = new ProxyClient();
         final HttpHost target = new HttpHost("www.baidu.com", 80);
         final HttpHost proxy = new HttpHost("localhost", 3128);
@@ -41,5 +45,17 @@ public class ProxyTunnelTest {
                 System.out.println(line);
             }
         }
+    }
+
+    @Test
+    void test2() throws URISyntaxException {
+        URIBuilder uriBuilder = new URIBuilder("https://asset.test.myspacex.cn");
+        uriBuilder.setPath("/file/proxy");
+        uriBuilder.setParameter("file_id", "3434");
+        // set会覆盖相同的参数
+        uriBuilder.setParameter("file_id", "4568");
+        URI uri = uriBuilder.build();
+        System.out.println(uri);
+        Assertions.assertEquals("file_id=4568", uri.getQuery());
     }
 }

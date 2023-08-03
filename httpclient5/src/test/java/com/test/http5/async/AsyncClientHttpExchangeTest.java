@@ -5,7 +5,6 @@ import java.util.concurrent.Future;
 
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
-import org.apache.hc.client5.http.async.methods.SimpleRequestBuilder;
 import org.apache.hc.client5.http.async.methods.SimpleRequestProducer;
 import org.apache.hc.client5.http.async.methods.SimpleResponseConsumer;
 import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
@@ -35,10 +34,7 @@ public class AsyncClientHttpExchangeTest {
         final HttpHost target = new HttpHost("httpbin.org");
         final String[] requestUris = new String[]{"/", "/ip", "/user-agent", "/headers"};
         for (final String requestUri : requestUris) {
-            final SimpleHttpRequest request = SimpleRequestBuilder.get()
-                    .setHttpHost(target)
-                    .setPath(requestUri)
-                    .build();
+            final SimpleHttpRequest request = null;
 
             System.out.println("Executing request " + request);
             final Future<SimpleHttpResponse> future = client.execute(

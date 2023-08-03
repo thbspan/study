@@ -10,8 +10,8 @@ import java.util.concurrent.Future;
 
 import org.apache.hc.client5.http.async.methods.AbstractCharResponseConsumer;
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
+import org.apache.hc.client5.http.async.methods.SimpleHttpRequests;
 import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
-import org.apache.hc.client5.http.async.methods.SimpleRequestBuilder;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
@@ -34,10 +34,10 @@ import org.apache.hc.core5.http.nio.AsyncRequestProducer;
 import org.apache.hc.core5.http.nio.support.AsyncRequestBuilder;
 import org.junit.jupiter.api.Test;
 
-public class QuickStartTest {
+class QuickStartTest {
 
     @Test
-    public void test() throws IOException {
+    void test() throws IOException {
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             HttpGet httpGet = new HttpGet("http://httpbin.org/get");
             try (CloseableHttpResponse response = httpclient.execute(httpGet)) {
@@ -65,7 +65,7 @@ public class QuickStartTest {
     }
 
     @Test
-    public void testFluentApi() throws IOException {
+    void testFluentApi() throws IOException {
         System.out.println(Request.get("http://httpbin.org/get")
                 .execute().returnContent());
         System.out.println(Request.post("http://httpbin.org/post")
@@ -74,18 +74,18 @@ public class QuickStartTest {
     }
 
     @Test
-    public void testAsyncApi() throws IOException, ExecutionException, InterruptedException {
+    void testAsyncApi() throws IOException, ExecutionException, InterruptedException {
         try (CloseableHttpAsyncClient httpclient = HttpAsyncClients.createDefault()) {
             httpclient.start();
 
-            SimpleHttpRequest request1 = SimpleRequestBuilder.get("http://httpbin.org/get").build();
+            SimpleHttpRequest request1 = SimpleHttpRequests.get("http://httpbin.org/get");
 
             Future<SimpleHttpResponse> future = httpclient.execute(request1, null);
             SimpleHttpResponse response1 = future.get();
             System.out.println(request1.getRequestUri() + "->" + response1.getCode());
 
             CountDownLatch latch1 = new CountDownLatch(1);
-            SimpleHttpRequest request2 = SimpleRequestBuilder.get("http://httpbin.org/get").build();
+            SimpleHttpRequest request2 = SimpleHttpRequests.get("http://httpbin.org/get");
             httpclient.execute(request2, new FutureCallback<SimpleHttpResponse>() {
 
                 @Override
