@@ -37,6 +37,7 @@
         <module>rxjava</module>
         <module>xxl-job-test</module>
         <module>mybatis-plus</module>
+        <module>mybatis-flex</module>
     </modules>
 
     <dependencyManagement>

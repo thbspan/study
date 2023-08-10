@@ -8,7 +8,7 @@ public abstract class BaseJob implements Job, SmartLifecycle {
     /**
      * 任务集合key前缀
      */
-    private static final String REDIS_TASK_KEY_PREFIX = "__reuse_file:";
+    private static final String REDIS_TASK_KEY_PREFIX = "__k_task_pre:";
 
     /**
      * 任务锁key前缀

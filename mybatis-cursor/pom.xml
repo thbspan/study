@@ -14,14 +14,14 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <mybatis.starter.version>2.2.0</mybatis.starter.version>
+        <mybatis-starter.version>2.3.1</mybatis-starter.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>${mybatis.starter.version}</version>
+            <version>${mybatis-starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
