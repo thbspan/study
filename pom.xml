@@ -14,6 +14,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <snakeyaml.version>2.1</snakeyaml.version>
         <h2.version>2.2.220</h2.version>
+        <javassist.version>3.29.2-GA</javassist.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -40,6 +41,7 @@
         <module>xxl-job-test</module>
         <module>mybatis-plus</module>
         <module>mybatis-flex</module>
+        <module>javassist-test</module>
     </modules>
 
     <dependencyManagement>
@@ -61,6 +63,11 @@
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
