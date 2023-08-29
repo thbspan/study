@@ -3,6 +3,7 @@ package com.test.exp;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class MatcherAppendTest {
@@ -13,6 +14,7 @@ public class MatcherAppendTest {
         values.put("cat", "dog");
         MatcherAppend matcherAppend = new MatcherAppend(values);
 
-        System.out.println(matcherAppend.replaceAll("one ${cat} two ${cat}s in the yard"));
+        Assertions.assertEquals(matcherAppend.replaceAll("one ${cat} two ${cat}s in the yard"),
+                "one dog two dogs in the yard");
     }
 }

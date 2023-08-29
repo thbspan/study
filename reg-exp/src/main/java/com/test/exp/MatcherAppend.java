@@ -4,10 +4,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 使用正则表达式进行连续替换
+ */
 public class MatcherAppend {
-    private static final Pattern VARIABLE_PATTERN = Pattern.compile("\\$\\{(\\w+)\\}");
+    private static final Pattern VARIABLE_PATTERN = Pattern.compile("\\$\\{(\\w+)}");
 
-    private Map<String, String> values;
+    private final Map<String, String> values;
 
     public MatcherAppend(Map<String, String> values) {
         this.values = values;
