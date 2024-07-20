@@ -8,7 +8,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
 import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
-import org.apache.hc.client5.http.async.methods.SimpleRequestBuilder;
 import org.apache.hc.client5.http.async.methods.SimpleRequestProducer;
 import org.apache.hc.client5.http.async.methods.SimpleResponseConsumer;
 import org.apache.hc.client5.http.impl.async.HttpAsyncClients;
@@ -27,10 +26,10 @@ import org.junit.jupiter.api.Test;
 /**
  * This example demonstrates pipelined execution of multiple HTTP/1.1 message exchanges.
  */
-public class AsyncClientHttp1PipeliningTest {
+class AsyncClientHttp1PipeliningTest {
 
     @Test
-    public void test() throws ExecutionException, InterruptedException, TimeoutException {
+    void test() throws ExecutionException, InterruptedException, TimeoutException {
         final IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
                 .setSoTimeout(Timeout.ofSeconds(5))
                 .build();
@@ -49,10 +48,7 @@ public class AsyncClientHttp1PipeliningTest {
 
             final CountDownLatch latch = new CountDownLatch(requestUris.length);
             for (final String requestUri : requestUris) {
-                final SimpleHttpRequest request = SimpleRequestBuilder.get()
-                        .setHttpHost(target)
-                        .setPath(requestUri)
-                        .build();
+                final SimpleHttpRequest request = null;
 
                 System.out.println("Executing request " + request);
                 endpoint.execute(SimpleRequestProducer.create(request),

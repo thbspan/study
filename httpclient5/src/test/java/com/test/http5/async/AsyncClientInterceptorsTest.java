@@ -11,8 +11,8 @@ import org.apache.hc.client5.http.async.AsyncExecCallback;
 import org.apache.hc.client5.http.async.AsyncExecChain;
 import org.apache.hc.client5.http.async.AsyncExecChainHandler;
 import org.apache.hc.client5.http.async.methods.SimpleHttpRequest;
+import org.apache.hc.client5.http.async.methods.SimpleHttpRequests;
 import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
-import org.apache.hc.client5.http.async.methods.SimpleRequestBuilder;
 import org.apache.hc.client5.http.impl.ChainElement;
 import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
 import org.apache.hc.client5.http.impl.async.HttpAsyncClients;
@@ -77,7 +77,7 @@ public class AsyncClientInterceptorsTest {
         client.start();
         String requestUri = "http://httpbin.org/get";
         for (int i = 0; i < 20; i++) {
-            final SimpleHttpRequest request = SimpleRequestBuilder.get(requestUri).build();
+            final SimpleHttpRequest request = SimpleHttpRequests.get(requestUri);
             System.out.println("Executing request " + request);
             final Future<SimpleHttpResponse> future = client.execute(request,
                     new FutureCallback<SimpleHttpResponse>() {
