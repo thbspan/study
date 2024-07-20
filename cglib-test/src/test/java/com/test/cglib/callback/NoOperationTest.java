@@ -3,9 +3,8 @@ package com.test.cglib.callback;
 import org.junit.jupiter.api.Test;
 
 import com.test.cglib.Example;
-
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.NoOp;
+import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.cglib.proxy.NoOp;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

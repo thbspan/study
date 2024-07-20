@@ -5,9 +5,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import com.test.cglib.annotation.Bean;
+import org.springframework.cglib.proxy.MethodInterceptor;
+import org.springframework.cglib.proxy.MethodProxy;
 
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
 
 public class BeanMethodInterceptor implements MethodInterceptor, ConditionalCallback {
     private final ConcurrentMap<Method, Object> factory = new ConcurrentHashMap<>();

@@ -2,11 +2,11 @@ package com.test.cglib;
 
 import com.test.cglib.annotation.Bean;
 import com.test.cglib.callback.BeanMethodInterceptor;
+import org.springframework.cglib.core.DefaultGeneratorStrategy;
+import org.springframework.cglib.proxy.Callback;
+import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.cglib.proxy.NoOp;
 
-import net.sf.cglib.core.DefaultGeneratorStrategy;
-import net.sf.cglib.proxy.Callback;
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.NoOp;
 
 /**
  * 模拟spring实现{@link Bean}注解增强

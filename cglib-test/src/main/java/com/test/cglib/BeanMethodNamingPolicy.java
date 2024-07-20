@@ -1,6 +1,6 @@
 package com.test.cglib;
 
-import net.sf.cglib.core.DefaultNamingPolicy;
+import org.springframework.cglib.core.DefaultNamingPolicy;
 
 public class BeanMethodNamingPolicy extends DefaultNamingPolicy {
     public static final BeanMethodNamingPolicy INSTANCE = new BeanMethodNamingPolicy();

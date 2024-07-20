@@ -3,9 +3,8 @@ package com.test.cglib;
 import java.lang.reflect.Method;
 
 import com.test.cglib.callback.ConditionalCallback;
-
-import net.sf.cglib.proxy.Callback;
-import net.sf.cglib.proxy.CallbackFilter;
+import org.springframework.cglib.proxy.Callback;
+import org.springframework.cglib.proxy.CallbackFilter;
 
 public class ConditionalCallbackFilter implements CallbackFilter {
     private final Callback[] callbacks;

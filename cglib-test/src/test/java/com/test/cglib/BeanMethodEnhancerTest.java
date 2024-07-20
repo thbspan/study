@@ -3,8 +3,7 @@ package com.test.cglib;
 import org.junit.jupiter.api.Test;
 
 import com.test.cglib.annotation.Bean;
-
-import net.sf.cglib.core.DebuggingClassWriter;
+import org.springframework.cglib.core.DebuggingClassWriter;
 
 /**
  * {@link Bean}注解增强测试类

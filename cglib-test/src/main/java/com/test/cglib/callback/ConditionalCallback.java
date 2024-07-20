@@ -1,8 +1,8 @@
 package com.test.cglib.callback;
 
-import java.lang.reflect.Method;
+import org.springframework.cglib.proxy.Callback;
 
-import net.sf.cglib.proxy.Callback;
+import java.lang.reflect.Method;
 
 public interface ConditionalCallback extends Callback {
     boolean isMatch(Method candidateMethod);

@@ -1,10 +1,9 @@
 package com.test.cglib.callback;
 
 import org.junit.jupiter.api.Test;
-
-import net.sf.cglib.proxy.Dispatcher;
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.LazyLoader;
+import org.springframework.cglib.proxy.Dispatcher;
+import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.cglib.proxy.LazyLoader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
