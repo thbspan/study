@@ -9,7 +9,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <properties>
         <java.source>1.8</java.source>
-        <spring-boot.version>2.7.16</spring-boot.version>
+        <spring-boot.version>2.7.18</spring-boot.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <snakeyaml.version>2.2</snakeyaml.version>
