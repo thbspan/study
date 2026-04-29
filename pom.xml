@@ -8,7 +8,7 @@
 
     <version>0.0.1-SNAPSHOT</version>
     <properties>
-        <java.source>8</java.source>
+        <java.source>25</java.source>
         <spring-boot.version>2.7.18</spring-boot.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -43,6 +43,7 @@
         <module>mybatis-flex</module>
         <module>javassist-test</module>
         <module>concurrent</module>
+        <module>b-plus-tree-demo</module>
     </modules>
 
     <dependencyManagement>
