@@ -37,13 +37,7 @@ public class Record {
         this.value = value;
         this.valueLength = value != null ? value.length() : 0;
     }
-    
-    /**
-     * 无参构造函数（用于反序列化）
-     */
-    public Record() {
-    }
-    
+
     /**
      * 获取键
      * 

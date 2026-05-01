@@ -4,3 +4,4 @@
 *.iml
 *.iws
 target/
+/bplus_tree.db
