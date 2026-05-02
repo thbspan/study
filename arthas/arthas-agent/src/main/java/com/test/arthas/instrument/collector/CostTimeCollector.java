@@ -25,7 +25,7 @@ public class CostTimeCollector {
     }
 
     private static String[] getUniqueKey(Thread thread, StackTraceElement[] stackTrace) {
-        String s = thread.getId() + "@" + Thread.currentThread().getName();
+        String s = thread.threadId() + "@" + Thread.currentThread().getName();
         String s1 = stackTrace[1].getClassName() + "@" + stackTrace[1].getMethodName();
         return new String[]{s, s1, s + s1};
     }

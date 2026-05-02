@@ -71,7 +71,7 @@ public class PageSerializer {
      * @param prevPageNum   前一个叶子页号
      * @return 页数据（字节数组）
      */
-    public byte[] serializeLeafNode(List<Record> records, int pageNum,
+    public byte[] serializeLeafNode(List<TreeRecord> records, int pageNum,
                                     int parentPageNum, int nextPageNum, int prevPageNum) {
         try {
             ByteArrayOutputStream bas = new ByteArrayOutputStream();
@@ -86,9 +86,9 @@ public class PageSerializer {
             dos.write(new byte[17]);  // 保留17字节
 
             // 写入数据区：[键1][值长度1][值数据1][键2][值长度2][值数据2]...
-            for (Record record : records) {
-                dos.writeInt(record.getKey());  // 键
-                byte[] valueBytes = record.getValue().getBytes(StandardCharsets.UTF_8);
+            for (TreeRecord record : records) {
+                dos.writeInt(record.key());  // 键
+                byte[] valueBytes = record.value().getBytes(StandardCharsets.UTF_8);
                 dos.writeShort(valueBytes.length);  // 值长度
                 dos.write(valueBytes);  // 值数据
             }
@@ -206,7 +206,7 @@ public class PageSerializer {
                 dis.readFully(valueBytes);
                 String value = new String(valueBytes, StandardCharsets.UTF_8);
 
-                Record record = new Record(key, value);
+                TreeRecord record = new TreeRecord(key, value);
                 node.addRecord(record);
             }
 

@@ -58,21 +58,21 @@ public class PersistentBPlusTreeDemo {
             
             // 精确查询
             System.out.println("精确查询:");
-            Record record1 = tree.search(10);
-            System.out.println("  查找键 10: " + (record1 != null ? record1.getValue() : "未找到"));
+            TreeRecord record1 = tree.search(10);
+            System.out.println("  查找键 10: " + (record1 != null ? record1.value() : "未找到"));
             
-            Record record2 = tree.search(20);
-            System.out.println("  查找键 20: " + (record2 != null ? record2.getValue() : "未找到"));
+            TreeRecord record2 = tree.search(20);
+            System.out.println("  查找键 20: " + (record2 != null ? record2.value() : "未找到"));
             
-            Record record3 = tree.search(99);
-            System.out.println("  查找键 99: " + (record3 != null ? record3.getValue() : "未找到"));
+            TreeRecord record3 = tree.search(99);
+            System.out.println("  查找键 99: " + (record3 != null ? record3.value() : "未找到"));
             System.out.println();
             
             // 范围查询
             System.out.println("范围查询 [10, 25]:");
-            List<Record> rangeResults = tree.rangeQuery(10, 25);
-            for (Record r : rangeResults) {
-                System.out.println("  " + r.getKey() + " -> " + r.getValue());
+            List<TreeRecord> rangeResults = tree.rangeQuery(10, 25);
+            for (TreeRecord r : rangeResults) {
+                System.out.println("  " + r.key() + " -> " + r.value());
             }
             System.out.println();
             
@@ -97,14 +97,14 @@ public class PersistentBPlusTreeDemo {
             
             // 验证数据是否存在
             System.out.println("验证持久化的数据:");
-            Record persistedRecord1 = tree2.search(10);
-            System.out.println("  查找键 10: " + (persistedRecord1 != null ? persistedRecord1.getValue() : "未找到"));
+            TreeRecord persistedRecord1 = tree2.search(10);
+            System.out.println("  查找键 10: " + (persistedRecord1 != null ? persistedRecord1.value() : "未找到"));
             
-            Record persistedRecord2 = tree2.search(15);
-            System.out.println("  查找键 15: " + (persistedRecord2 != null ? persistedRecord2.getValue() : "未找到"));
+            TreeRecord persistedRecord2 = tree2.search(15);
+            System.out.println("  查找键 15: " + (persistedRecord2 != null ? persistedRecord2.value() : "未找到"));
             
-            Record persistedRecord3 = tree2.search(25);
-            System.out.println("  查找键 25: " + (persistedRecord3 != null ? persistedRecord3.getValue() : "未找到"));
+            TreeRecord persistedRecord3 = tree2.search(25);
+            System.out.println("  查找键 25: " + (persistedRecord3 != null ? persistedRecord3.value() : "未找到"));
             System.out.println();
             
             // 打印树结构（应该与关闭前相同）
@@ -150,9 +150,9 @@ public class PersistentBPlusTreeDemo {
             System.out.println("--- 第七阶段：最终查询验证 ---\n");
             
             System.out.println("查询所有剩余数据:");
-            List<Record> allRecords = tree2.rangeQuery(0, 100);
-            for (Record r : allRecords) {
-                System.out.println("  " + r.getKey() + " -> " + r.getValue());
+            List<TreeRecord> allRecords = tree2.rangeQuery(0, 100);
+            for (TreeRecord r : allRecords) {
+                System.out.println("  " + r.key() + " -> " + r.value());
             }
             System.out.println();
             

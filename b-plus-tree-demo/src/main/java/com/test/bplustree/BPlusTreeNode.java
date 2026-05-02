@@ -1,6 +1,6 @@
 package com.test.bplustree;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -58,7 +58,7 @@ public class BPlusTreeNode {
      * 子节点页号列表（用于持久化）
      * 替代 children 对象列表
      */
-    private List<Integer> childPageNums = new ArrayList<>();
+    private final List<Integer> childPageNums = new LinkedList<>();
 
     /**
      * 下一个叶子页号（用于持久化）
@@ -76,7 +76,7 @@ public class BPlusTreeNode {
      * 记录列表（用于持久化）
      * 叶子节点存储完整的记录（键+值）
      */
-    private List<Record> records = new ArrayList<>();
+    private final List<TreeRecord> records = new LinkedList<>();
 
     /**
      * 构造函数：创建一个新的B+树节点
@@ -85,8 +85,8 @@ public class BPlusTreeNode {
      */
     public BPlusTreeNode(boolean isLeaf) {
         this.isLeaf = isLeaf;
-        this.keys = new ArrayList<>();
-        this.children = new ArrayList<>();
+        this.keys = new LinkedList<>();
+        this.children = new LinkedList<>();
         this.nextLeaf = null;
         this.parent = null;
     }
@@ -314,7 +314,7 @@ public class BPlusTreeNode {
      *
      * @return 记录列表
      */
-    public List<Record> getRecords() {
+    public List<TreeRecord> getRecords() {
         return records;
     }
 
@@ -323,10 +323,10 @@ public class BPlusTreeNode {
      *
      * @param record 记录
      */
-    public void addRecord(Record record) {
+    public void addRecord(TreeRecord record) {
         records.add(record);
         // 同时添加到keys列表（保持兼容）
-        keys.add(record.getKey());
+        keys.add(record.key());
     }
 
     /**
@@ -335,9 +335,9 @@ public class BPlusTreeNode {
      * @param index 插入位置
      * @param record 记录
      */
-    public void insertRecord(int index, Record record) {
+    public void insertRecord(int index, TreeRecord record) {
         records.add(index, record);
-        keys.add(index, record.getKey());
+        keys.add(index, record.key());
     }
 
     /**
@@ -346,7 +346,7 @@ public class BPlusTreeNode {
      * @param index 移除位置
      * @return 被移除的记录
      */
-    public Record removeRecord(int index) {
+    public TreeRecord removeRecord(int index) {
         keys.remove(index);
         return records.remove(index);
     }

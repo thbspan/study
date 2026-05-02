@@ -110,7 +110,7 @@ public class PersistentBPlusTree {
      * @throws Exception 如果插入失败
      */
     public void insert(int key, String value) throws Exception {
-        Record record = new Record(key, value);
+        TreeRecord record = new TreeRecord(key, value);
 
         // 找到应该插入的叶子节点
         BPlusTreeNode leaf = findLeafNode(rootPageNum, key);
@@ -134,13 +134,13 @@ public class PersistentBPlusTree {
      * @return 记录，如果不存在返回null
      * @throws Exception 如果查找失败
      */
-    public Record search(int key) throws Exception {
+    public TreeRecord search(int key) throws Exception {
         // 找到包含该键的叶子节点
         BPlusTreeNode leaf = findLeafNode(rootPageNum, key);
 
         // 在叶子节点中查找记录
-        for (Record record : leaf.getRecords()) {
-            if (record.getKey() == key) {
+        for (TreeRecord record : leaf.getRecords()) {
+            if (record.key() == key) {
                 return record;
             }
         }
@@ -161,7 +161,7 @@ public class PersistentBPlusTree {
 
         // 在叶子节点中查找并删除记录
         for (int i = 0; i < leaf.getRecords().size(); i++) {
-            if (leaf.getRecords().get(i).getKey() == key) {
+            if (leaf.getRecords().get(i).key() == key) {
                 leaf.removeRecord(i);
 
                 // 保存修改
@@ -190,19 +190,19 @@ public class PersistentBPlusTree {
      * @return 范围内的记录列表
      * @throws Exception 如果查询失败
      */
-    public List<Record> rangeQuery(int startKey, int endKey) throws Exception {
-        List<Record> results = new ArrayList<>();
+    public List<TreeRecord> rangeQuery(int startKey, int endKey) throws Exception {
+        List<TreeRecord> results = new ArrayList<>();
 
         // 找到起始键所在的叶子节点
         BPlusTreeNode leaf = findLeafNode(rootPageNum, startKey);
 
         // 遍历叶子节点链表
         while (leaf != null && leaf.getPageNum() != -1) {
-            for (Record record : leaf.getRecords()) {
-                if (record.getKey() >= startKey && record.getKey() <= endKey) {
+            for (TreeRecord record : leaf.getRecords()) {
+                if (record.key() >= startKey && record.key() <= endKey) {
                     results.add(record);
                 }
-                if (record.getKey() > endKey) {
+                if (record.key() > endKey) {
                     return results;
                 }
             }
@@ -267,10 +267,10 @@ public class PersistentBPlusTree {
      * @param leaf   叶子节点
      * @param record 记录
      */
-    private void insertRecordIntoLeaf(BPlusTreeNode leaf, Record record) {
+    private void insertRecordIntoLeaf(BPlusTreeNode leaf, TreeRecord record) {
         int i = 0;
         // 找到插入位置，保持有序
-        while (i < leaf.getRecords().size() && leaf.getRecords().get(i).getKey() < record.getKey()) {
+        while (i < leaf.getRecords().size() && leaf.getRecords().get(i).key() < record.key()) {
             i++;
         }
         leaf.insertRecord(i, record);
@@ -323,7 +323,7 @@ public class PersistentBPlusTree {
 
         // 移动后半部分的记录到新节点
         for (int i = leaf.getRecords().size() - 1; i >= mid; i--) {
-            Record record = leaf.removeRecord(i);
+            TreeRecord record = leaf.removeRecord(i);
             newLeaf.insertRecord(0, record);
         }
 
@@ -343,7 +343,7 @@ public class PersistentBPlusTree {
             int newRootPageNum = pageManager.allocatePage();
             BPlusTreeNode newRoot = new BPlusTreeNode(false);
             newRoot.setPageNum(newRootPageNum);
-            newRoot.addKey(newLeaf.getRecords().getFirst().getKey());
+            newRoot.addKey(newLeaf.getRecords().getFirst().key());
             newRoot.addChildPageNum(leaf.getPageNum());
             newRoot.addChildPageNum(newPageNum);
 
@@ -363,7 +363,7 @@ public class PersistentBPlusTree {
             // 注意：需要先保存修改后的 leaf 节点
             saveNode(leaf);
             saveNode(newLeaf);
-            insertIntoParent(leaf, newLeaf.getRecords().getFirst().getKey(), newPageNum);
+            insertIntoParent(leaf, newLeaf.getRecords().getFirst().key(), newPageNum);
         }
     }
 
@@ -520,7 +520,7 @@ public class PersistentBPlusTree {
         if (current.getRecords().isEmpty()) {
             throw new IllegalStateException("节点 " + current.getPageNum() + " 为空，无法获取最小键值");
         }
-        return current.getRecords().getFirst().getKey();
+        return current.getRecords().getFirst().key();
     }
 
     /**
@@ -583,9 +583,9 @@ public class PersistentBPlusTree {
     private void borrowFromLeft(BPlusTreeNode node, BPlusTreeNode leftSibling, BPlusTreeNode parent,
                                 int parentIndex) throws Exception {
         if (node.isLeaf) {
-            Record borrowedRecord = leftSibling.removeRecord(leftSibling.getRecords().size() - 1);
+            TreeRecord borrowedRecord = leftSibling.removeRecord(leftSibling.getRecords().size() - 1);
             node.insertRecord(0, borrowedRecord);
-            parent.setKey(parentIndex, node.getRecords().getFirst().getKey());
+            parent.setKey(parentIndex, node.getRecords().getFirst().key());
         } else {
             int parentKey = parent.getKey(parentIndex);
             int borrowedKey = leftSibling.removeKey(leftSibling.getKeyCount() - 1);
@@ -617,9 +617,9 @@ public class PersistentBPlusTree {
     private void borrowFromRight(BPlusTreeNode node, BPlusTreeNode rightSibling, BPlusTreeNode parent,
                                  int parentIndex) throws Exception {
         if (node.isLeaf) {
-            Record borrowedRecord = rightSibling.removeRecord(0);
+            TreeRecord borrowedRecord = rightSibling.removeRecord(0);
             node.addRecord(borrowedRecord);
-            parent.setKey(parentIndex, rightSibling.getRecords().getFirst().getKey());
+            parent.setKey(parentIndex, rightSibling.getRecords().getFirst().key());
         } else {
             int parentKey = parent.getKey(parentIndex);
             int borrowedKey = rightSibling.removeKey(0);
@@ -651,7 +651,7 @@ public class PersistentBPlusTree {
     private void mergeNodes(BPlusTreeNode leftNode, BPlusTreeNode rightNode, BPlusTreeNode parent,
                             int parentIndex) throws Exception {
         if (leftNode.isLeaf) {
-            for (Record record : rightNode.getRecords()) {
+            for (TreeRecord record : rightNode.getRecords()) {
                 leftNode.addRecord(record);
             }
 
@@ -762,8 +762,8 @@ public class PersistentBPlusTree {
 
         if (node.isLeaf) {
             System.out.print(indent + "叶子节点[页" + pageNum + "]: ");
-            for (Record record : node.getRecords()) {
-                System.out.print("(" + record.getKey() + "," + record.getValue() + ") ");
+            for (TreeRecord record : node.getRecords()) {
+                System.out.print("(" + record.key() + "," + record.value() + ") ");
             }
             System.out.println();
         } else {
